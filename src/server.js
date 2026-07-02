@@ -2,21 +2,19 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const pinoHttp = require('pino-http');
+const pino = require('pino');
 
 const app = express();
 
 const PORT = process.env.PORT || 3000;
 
+const logger = pino();
+
 app.use(cors());
 app.use(express.json());
 app.use(
   pinoHttp({
-    transport: {
-      target: 'pino-pretty',
-      options: {
-        colorize: true,
-      },
-    },
+    logger,
   }),
 );
 
