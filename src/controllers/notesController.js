@@ -1,7 +1,7 @@
-const createHttpError = require('http-errors');
-const Note = require('../models/note');
+import createHttpError from 'http-errors';
+import { Note } from '../models/note.js';
 
-const getAllNotes = async (req, res, next) => {
+export const getAllNotes = async (req, res, next) => {
   try {
     const notes = await Note.find();
     res.status(200).json(notes);
@@ -10,7 +10,7 @@ const getAllNotes = async (req, res, next) => {
   }
 };
 
-const getNoteById = async (req, res, next) => {
+export const getNoteById = async (req, res, next) => {
   try {
     const { noteId } = req.params;
     const note = await Note.findById(noteId);
@@ -25,7 +25,7 @@ const getNoteById = async (req, res, next) => {
   }
 };
 
-const createNote = async (req, res, next) => {
+export const createNote = async (req, res, next) => {
   try {
     const note = await Note.create(req.body);
     res.status(201).json(note);
@@ -34,7 +34,7 @@ const createNote = async (req, res, next) => {
   }
 };
 
-const deleteNote = async (req, res, next) => {
+export const deleteNote = async (req, res, next) => {
   try {
     const { noteId } = req.params;
     const note = await Note.findByIdAndDelete(noteId);
@@ -49,7 +49,7 @@ const deleteNote = async (req, res, next) => {
   }
 };
 
-const updateNote = async (req, res, next) => {
+export const updateNote = async (req, res, next) => {
   try {
     const { noteId } = req.params;
 
@@ -66,12 +66,4 @@ const updateNote = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
-
-module.exports = {
-  getAllNotes,
-  getNoteById,
-  createNote,
-  deleteNote,
-  updateNote,
 };
