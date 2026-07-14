@@ -1,28 +1,44 @@
-// src/controllers/notesControllers.js
-import { Note } from '../models/note.js';
 import createHttpError from 'http-errors';
+import { Note } from '../models/note.js';
 
-export const getNotesController = async (req, res) => {
+export const getAllNotes = async (req, res) => {
   const { page = 1, perPage = 10, tag, search = '' } = req.query;
-
-  const filter = {};
-
-  if (tag) {
-    filter.tag = tag;
-  }
-
-  if (search) {
-    filter.$or = [
-      { title: { $regex: search, $options: 'i' } },
-      { content: { $regex: search, $options: 'i' } },
-    ];
-  }
 
   const skip = (page - 1) * perPage;
 
+  const notesQuery = Note.find();
+
+  if (tag) {
+    notesQuery.where('tag').equals(tag);
+  }
+
+  if (search) {
+    notesQuery.where({
+      $or: [
+        { title: { $regex: search, $options: 'i' } },
+        { content: { $regex: search, $options: 'i' } },
+      ],
+    });
+  }
+
+  const countQuery = Note.find();
+
+  if (tag) {
+    countQuery.where('tag').equals(tag);
+  }
+
+  if (search) {
+    countQuery.where({
+      $or: [
+        { title: { $regex: search, $options: 'i' } },
+        { content: { $regex: search, $options: 'i' } },
+      ],
+    });
+  }
+
   const [notes, totalNotes] = await Promise.all([
-    Note.find(filter).skip(skip).limit(perPage),
-    Note.countDocuments(filter),
+    notesQuery.skip(skip).limit(perPage),
+    countQuery.countDocuments(),
   ]);
 
   const totalPages = Math.ceil(totalNotes / perPage);
@@ -36,7 +52,7 @@ export const getNotesController = async (req, res) => {
   });
 };
 
-export const getNoteByIdController = async (req, res) => {
+export const getNoteById = async (req, res) => {
   const { noteId } = req.params;
 
   const note = await Note.findById(noteId);
@@ -48,33 +64,33 @@ export const getNoteByIdController = async (req, res) => {
   res.status(200).json(note);
 };
 
-export const createNoteController = async (req, res) => {
+export const createNote = async (req, res) => {
   const note = await Note.create(req.body);
   res.status(201).json(note);
 };
 
-export const updateNoteController = async (req, res) => {
+export const updateNote = async (req, res) => {
   const { noteId } = req.params;
 
-  const note = await Note.findByIdAndUpdate(noteId, req.body, {
-    new: true,
+  const updatedNote = await Note.findByIdAndUpdate(noteId, req.body, {
+    returnDocument: 'after',
   });
 
-  if (!note) {
+  if (!updatedNote) {
     throw createHttpError(404, 'Note not found');
   }
 
-  res.status(200).json(note);
+  res.status(200).json(updatedNote);
 };
 
-export const deleteNoteController = async (req, res) => {
+export const deleteNote = async (req, res) => {
   const { noteId } = req.params;
 
-  const note = await Note.findByIdAndDelete(noteId);
+  const deletedNote = await Note.findByIdAndDelete(noteId);
 
-  if (!note) {
+  if (!deletedNote) {
     throw createHttpError(404, 'Note not found');
   }
 
-  res.status(204).send();
+  res.status(200).json(deletedNote);
 };
