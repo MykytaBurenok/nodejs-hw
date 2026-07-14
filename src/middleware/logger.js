@@ -1,3 +1,6 @@
-import pinoHttp from 'pino-http';
+const logger = (req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+};
 
-export const logger = pinoHttp();
+export default logger;
