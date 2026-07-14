@@ -13,11 +13,12 @@
   "author": "Mykyta Burenok <burenoknikitad@gmail.com>",
   "license": "ISC",
   "dependencies": {
+    "celebrate": "^15.0.3",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "http-errors": "^2.0.0",
-    "mongoose": "^8.18.0",
+    "http-errors": "^2.0.1",
+    "mongoose": "^8.24.1",
     "pino-http": "^11.0.0"
   },
   "devDependencies": {
