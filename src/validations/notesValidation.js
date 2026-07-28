@@ -1,50 +1,32 @@
-// src/validations/notesValidation.js
-import { celebrate, Joi, Segments } from 'celebrate';
-import mongoose from 'mongoose';
-import { TAGS } from '../constants/tags.js';
+import Joi from 'joi';
 
-const objectIdValidator = (value, helpers) => {
-  if (!mongoose.isValidObjectId(value)) {
-    return helpers.message('Invalid noteId');
-  }
+export const createNoteSchema = Joi.object({
+  title: Joi.string().required(),
+  content: Joi.string().default(''),
+  tag: Joi.string().valid('Todo', 'In Progress', 'Done').default('Todo'),
+});
 
-  return value;
-};
+export const getNotesQuerySchema = Joi.object({
+  page: Joi.number().integer().min(1).default(1),
+  perPage: Joi.number().integer().min(1).default(10),
+  tag: Joi.string().valid('Todo', 'In Progress', 'Done'),
+  search: Joi.string().default(''),
+});
 
-export const getAllNotesSchema = {
-  [Segments.QUERY]: Joi.object({
-    page: Joi.number().integer().min(1).default(1),
-    perPage: Joi.number().integer().min(5).max(20).default(10),
-    tag: Joi.string().valid(...TAGS),
-    search: Joi.string().allow('').optional(),
-  }),
-};
+export const getNoteByIdParamsSchema = Joi.object({
+  noteId: Joi.string().hex().length(24).required(),
+});
 
-export const noteIdSchema = {
-  [Segments.PARAMS]: Joi.object({
-    noteId: Joi.string().custom(objectIdValidator).required(),
-  }),
-};
+export const updateNoteParamsSchema = Joi.object({
+  noteId: Joi.string().hex().length(24).required(),
+});
 
-export const createNoteSchema = {
-  [Segments.BODY]: Joi.object({
-    title: Joi.string().min(1).required(),
-    content: Joi.string().allow('').optional(),
-    tag: Joi.string()
-      .valid(...TAGS)
-      .optional(),
-  }),
-};
+export const updateNoteBodySchema = Joi.object({
+  title: Joi.string(),
+  content: Joi.string(),
+  tag: Joi.string().valid('Todo', 'In Progress', 'Done'),
+});
 
-export const updateNoteSchema = {
-  [Segments.PARAMS]: Joi.object({
-    noteId: Joi.string().custom(objectIdValidator).required(),
-  }),
-  [Segments.BODY]: Joi.object({
-    title: Joi.string().min(1).optional(),
-    content: Joi.string().allow('').optional(),
-    tag: Joi.string()
-      .valid(...TAGS)
-      .optional(),
-  }).min(1),
-};
+export const deleteNoteParamsSchema = Joi.object({
+  noteId: Joi.string().hex().length(24).required(),
+});

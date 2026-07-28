@@ -1,10 +1,14 @@
 import express from 'express';
-import { authenticate } from '../middleware/authenticate.js';
 import { celebrate } from 'celebrate';
+import { authenticate } from '../middleware/authenticate.js';
 import {
   createNoteSchema,
-  updateNoteSchema,
-} from '../validations/noteValidation.js';
+  getNotesQuerySchema,
+  getNoteByIdParamsSchema,
+  updateNoteParamsSchema,
+  updateNoteBodySchema,
+  deleteNoteParamsSchema,
+} from '../validations/notesValidation.js';
 import {
   createNote,
   getAllNotes,
@@ -15,12 +19,25 @@ import {
 
 const router = express.Router();
 
+// Protect all note routes
 router.use(authenticate);
 
 router.post('/', celebrate({ body: createNoteSchema }), createNote);
-router.get('/', getAllNotes);
-router.get('/:noteId', getNoteById);
-router.put('/:noteId', celebrate({ body: updateNoteSchema }), updateNote);
-router.delete('/:noteId', deleteNote);
+router.get('/', celebrate({ query: getNotesQuerySchema }), getAllNotes);
+router.get(
+  '/:noteId',
+  celebrate({ params: getNoteByIdParamsSchema }),
+  getNoteById,
+);
+router.patch(
+  '/:noteId',
+  celebrate({ params: updateNoteParamsSchema, body: updateNoteBodySchema }),
+  updateNote,
+);
+router.delete(
+  '/:noteId',
+  celebrate({ params: deleteNoteParamsSchema }),
+  deleteNote,
+);
 
 export default router;
