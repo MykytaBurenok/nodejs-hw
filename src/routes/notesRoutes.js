@@ -17,17 +17,20 @@ import {
 
 const router = express.Router();
 
-// Protect all note routes
 router.use(authenticate);
 
-router.post('/', celebrate({ body: createNoteSchema }), createNote);
-router.get('/', celebrate({ query: getAllNotesSchema }), getAllNotes);
-router.get('/:noteId', celebrate({ params: noteIdSchema }), getNoteById);
+router.post('/notes', celebrate({ body: createNoteSchema }), createNote);
+router.get('/notes', celebrate({ query: getAllNotesSchema }), getAllNotes);
+router.get('/notes/:noteId', celebrate({ params: noteIdSchema }), getNoteById);
 router.patch(
-  '/:noteId',
+  '/notes/:noteId',
   celebrate({ params: noteIdSchema, body: updateNoteSchema }),
   updateNote,
 );
-router.delete('/:noteId', celebrate({ params: noteIdSchema }), deleteNote);
+router.delete(
+  '/notes/:noteId',
+  celebrate({ params: noteIdSchema }),
+  deleteNote,
+);
 
 export default router;
