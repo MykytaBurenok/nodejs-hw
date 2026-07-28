@@ -26,7 +26,7 @@ const bootstrap = async () => {
   app.use(logger);
 
   app.use('/auth', authRouter);
-  app.use(notesRouter);
+  app.use('/notes', notesRouter);
 
   app.use(notFoundHandler);
   app.use(errors());

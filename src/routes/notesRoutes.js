@@ -3,11 +3,9 @@ import { celebrate } from 'celebrate';
 import { authenticate } from '../middleware/authenticate.js';
 import {
   createNoteSchema,
-  getNotesQuerySchema,
-  getNoteByIdParamsSchema,
-  updateNoteParamsSchema,
-  updateNoteBodySchema,
-  deleteNoteParamsSchema,
+  getAllNotesSchema,
+  noteIdSchema,
+  updateNoteSchema,
 } from '../validations/notesValidation.js';
 import {
   createNote,
@@ -23,21 +21,13 @@ const router = express.Router();
 router.use(authenticate);
 
 router.post('/', celebrate({ body: createNoteSchema }), createNote);
-router.get('/', celebrate({ query: getNotesQuerySchema }), getAllNotes);
-router.get(
-  '/:noteId',
-  celebrate({ params: getNoteByIdParamsSchema }),
-  getNoteById,
-);
+router.get('/', celebrate({ query: getAllNotesSchema }), getAllNotes);
+router.get('/:noteId', celebrate({ params: noteIdSchema }), getNoteById);
 router.patch(
   '/:noteId',
-  celebrate({ params: updateNoteParamsSchema, body: updateNoteBodySchema }),
+  celebrate({ params: noteIdSchema, body: updateNoteSchema }),
   updateNote,
 );
-router.delete(
-  '/:noteId',
-  celebrate({ params: deleteNoteParamsSchema }),
-  deleteNote,
-);
+router.delete('/:noteId', celebrate({ params: noteIdSchema }), deleteNote);
 
 export default router;
