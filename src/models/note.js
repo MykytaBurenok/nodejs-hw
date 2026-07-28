@@ -30,4 +30,7 @@ const noteSchema = new mongoose.Schema(
   },
 );
 
+// Складений індекс
+noteSchema.index({ tag: 1, userId: 1 });
+
 export const Note = mongoose.model('Note', noteSchema);
