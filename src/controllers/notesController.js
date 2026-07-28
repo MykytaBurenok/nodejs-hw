@@ -100,7 +100,7 @@ export const updateNote = async (req, res, next) => {
     const updatedNote = await Note.findOneAndUpdate(
       { _id: noteId, userId },
       req.body,
-      { new: true }, // return the updated document
+      { returnDocument: 'after' }, // <- changed from { new: true }
     );
 
     if (!updatedNote) {
