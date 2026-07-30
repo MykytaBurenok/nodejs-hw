@@ -5,6 +5,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import handlebars from 'handlebars';
+import { sendEmail } from '../utils/sendMail.js';
 
 import User from '../models/user.js';
 import { Session } from '../models/session.js';
@@ -156,9 +157,9 @@ export async function requestResetEmail(req, res, next) {
       resetLink,
     });
 
-    // Отправка письма
     try {
-      await sendMail({
+      await sendEmail({
+        from: process.env.SMTP_FROM,
         to: email,
         subject: 'Reset your password',
         html,
@@ -169,7 +170,6 @@ export async function requestResetEmail(req, res, next) {
         'Failed to send the email, please try again later.',
       );
     }
-
     res.status(200).json({ message: 'Password reset email sent successfully' });
   } catch (err) {
     next(err);

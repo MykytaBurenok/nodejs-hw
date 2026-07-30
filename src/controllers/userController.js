@@ -12,9 +12,13 @@ export async function updateUserAvatar(req, res, next) {
 
     const result = await saveFileToCloudinary(req.file.buffer, userId);
 
-    await User.updateOne({ _id: userId }, { avatar: result.secure_url });
+    const user = await User.findOneAndUpdate(
+      { _id: userId },
+      { avatar: result.secure_url },
+      { returnDocument: 'after' },
+    );
 
-    res.status(200).json({ url: result.secure_url });
+    res.status(200).json({ url: user.avatar });
   } catch (err) {
     next(err);
   }
