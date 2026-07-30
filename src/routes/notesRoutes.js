@@ -1,27 +1,36 @@
-import { Router } from 'express';
+import express from 'express';
 import { celebrate } from 'celebrate';
-
+import { authenticate } from '../middleware/authenticate.js';
 import {
+  createNoteSchema,
   getAllNotesSchema,
   noteIdSchema,
-  createNoteSchema,
   updateNoteSchema,
 } from '../validations/notesValidation.js';
-
 import {
+  createNote,
   getAllNotes,
   getNoteById,
-  createNote,
   updateNote,
   deleteNote,
 } from '../controllers/notesController.js';
 
-const router = Router();
+const router = express.Router();
 
-router.get('/notes', celebrate(getAllNotesSchema), getAllNotes);
-router.get('/notes/:noteId', celebrate(noteIdSchema), getNoteById);
-router.post('/notes', celebrate(createNoteSchema), createNote);
-router.patch('/notes/:noteId', celebrate(updateNoteSchema), updateNote);
-router.delete('/notes/:noteId', celebrate(noteIdSchema), deleteNote);
+router.use(authenticate);
+
+router.post('/notes', celebrate({ body: createNoteSchema }), createNote);
+router.get('/notes', celebrate({ query: getAllNotesSchema }), getAllNotes);
+router.get('/notes/:noteId', celebrate({ params: noteIdSchema }), getNoteById);
+router.patch(
+  '/notes/:noteId',
+  celebrate({ params: noteIdSchema, body: updateNoteSchema }),
+  updateNote,
+);
+router.delete(
+  '/notes/:noteId',
+  celebrate({ params: noteIdSchema }),
+  deleteNote,
+);
 
 export default router;

@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { errors } from 'celebrate';
+import userRouter from './routes/userRoutes.js';
 import cookieParser from 'cookie-parser';
 
 import { connectMongoDB } from './db/connectMongoDB.js';
@@ -25,8 +26,9 @@ const bootstrap = async () => {
   app.use(cookieParser());
   app.use(logger);
 
-  app.use('/auth', authRouter);
+  app.use(authRouter);
   app.use(notesRouter);
+  app.use(userRouter);
 
   app.use(notFoundHandler);
   app.use(errors());
