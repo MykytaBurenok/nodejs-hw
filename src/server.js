@@ -28,9 +28,6 @@ const bootstrap = async () => {
 
   app.use(authRouter);
   app.use(notesRouter);
-
-  app.use(authRouter);
-  app.use(notesRouter);
   app.use(userRouter);
 
   app.use(notFoundHandler);
