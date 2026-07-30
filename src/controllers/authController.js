@@ -5,13 +5,11 @@ import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import handlebars from 'handlebars';
-import { sendEmail } from '../utils/sendMail.js';
 
 import User from '../models/user.js';
 import { Session } from '../models/session.js';
 import { createSession, setSessionCookies } from '../services/auth.js';
 import { sendEmail } from '../utils/sendMail.js';
-
 // ===== REGISTER =====
 export async function registerUser(req, res, next) {
   try {
